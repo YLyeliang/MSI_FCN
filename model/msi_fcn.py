@@ -92,22 +92,38 @@ class MSI_FCN(tf.keras.Model):
 
         return l
 
+inp = Input(shape=[512,512,3],name='input_image')
+
 
 msi_fcn = MSI_FCN()
-# optimizer = tf.keras.optimizers.Adam(2e-4,beta_1=0.5)
-# loss = tf.keras.losses.binary_crossentropy()
+SCE = tf.keras.losses.BinaryCrossentropy(from_logits=True)
+optimizer = tf.keras.optimizers.Adam(2e-4,beta_1=0.5)
 
-x = tf.random.uniform([1,128,128,3])
+
+x = tf.random.uniform([1,512,512,3])
 with tf.GradientTape() as t:
     out = msi_fcn(x,training=True)
+# dense_net = msi_fcn.get_layer(name='dense_net_msi').get_layer("dense_block_3")
+dense_net = msi_fcn.get_layer(name='dense_net_msi')
+for layer in dense_net.layers:
+    print(layer.values)
+# gradients = t.gradient(out,msi_fcn.get_layer("dense_net_msi"))
+print()
 print(msi_fcn.summary())
-
-
 
 
 def msi_fcn(input_size=512, scale=4):
     sizes = [input_size // (2 ** i) for i in range(4)]
     inputs = [tf.keras.layers.Input(shape=[s, s, 3]) for s in sizes]
     assert len(inputs) == scale
+
+def train_step(model,input,label,epoch):
+    with tf.GradientTape() as t:
+        output = model(input)
+
+        loss = SCE(output,label)
+    gradients = t.gradient(loss,msi_fcn.trainable_variables)
+
+
 
 
