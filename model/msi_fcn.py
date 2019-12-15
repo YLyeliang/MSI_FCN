@@ -1,18 +1,6 @@
 import tensorflow as tf
 import numpy as np
-from tensorflow.keras import Model
-from tensorflow.keras.layers import (
-    Add,
-    Concatenate,
-    Conv2D,
-    Input,
-    Lambda,
-    LeakyReLU,
-    MaxPool2D,
-    UpSampling2D,
-    ZeroPadding2D,
-    BatchNormalization
-)
+from tensorflow.keras.layers import Input
 from core import Conv,TransposeConv
 from tensorflow.keras.regularizers import l2
 from tensorflow.keras.losses import (
@@ -23,7 +11,6 @@ from backbone import DenseNet_MSI
 from BottomUp import MSC,Upsample
 
 # def dense_block(x,growth_rate,filters):
-
 # model = DCU(16, 10)
 # input = tf.keras.Input(shape=(128, 128, 3))
 # t = tf.constant([[[1, 1, 1], [2, 2, 2]], [[3, 3, 3], [4, 4, 4]]])
@@ -32,12 +19,9 @@ from BottomUp import MSC,Upsample
 # for i in range(5):
 #     print(2 ** i)
 
-
 # _ = model(input)
 # model.summary()
 # tf.keras.utils.plot_model(model)
-
-
 
 class MSI_FCN(tf.keras.Model):
     """
@@ -112,15 +96,14 @@ print()
 print(msi_fcn.summary())
 
 
-def msi_fcn(input_size=512, scale=4):
-    sizes = [input_size // (2 ** i) for i in range(4)]
-    inputs = [tf.keras.layers.Input(shape=[s, s, 3]) for s in sizes]
-    assert len(inputs) == scale
+# def msi_fcn(input_size=512, scale=4):
+#     sizes = [input_size // (2 ** i) for i in range(4)]
+#     inputs = [tf.keras.layers.Input(shape=[s, s, 3]) for s in sizes]
+#     assert len(inputs) == scale
 
 def train_step(model,input,label,epoch):
     with tf.GradientTape() as t:
         output = model(input)
-
         loss = SCE(output,label)
     gradients = t.gradient(loss,msi_fcn.trainable_variables)
 
