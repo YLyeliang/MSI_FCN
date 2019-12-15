@@ -21,6 +21,53 @@ def get_hist(predictions, labels):
         hist += fast_hist(labels[i].flatten(), predictions[i].argmax(2).flatten(), num_class)
     return hist
 
+class Metrics():
+    def __init__(self):
+        self.tp = tf.metrics.TruePositives()
+        self.tn = tf.metrics.TrueNegatives()
+        self.fp = tf.metrics.FalsePositives()
+        self.fn = tf.metrics.FalseNegatives()
+        self.p = tf.keras.metrics.Precision()
+        self.r = tf.keras.metrics.Recall()
+        # auc = tf.keras.metrics.AUC()
+        self.acc = tf.keras.metrics.Accuracy()
+        self.MeanIou = tf.keras.metrics.MeanIoU(num_classes=2)
+
+    def calculate(self,true,pred):
+        metrics = {}
+        y_true = tf.argmax(true, axis=-1)
+        y_true = tf.reshape(y_true, (-1, 1))
+        y_pred = tf.reshape(pred, (-1, 1))
+
+        self.tp.update_state(y_true, y_pred)
+        self.tn.update_state(y_true, y_pred)
+        self.fp.update_state(y_true, y_pred)
+        self.fn.update_state(y_true, y_pred)
+        self.p.update_state(y_true, y_pred)
+        self.r.update_state(y_true, y_pred)
+        self.acc.update_state(y_true, y_pred)
+        self.MeanIou.update_state(y_true, y_pred)
+
+        num_tp = self.tp.result().numpy()
+        num_tn = self.tn.result().numpy()
+        num_fp = self.fp.result().numpy()
+        num_fn = self.fn.result().numpy()
+        num_p = self.p.result().numpy()
+        num_r = self.r.result().numpy()
+        num_acc = self.acc.result().numpy()
+        num_miou = self.MeanIou.result().numpy()
+
+        metrics['tp'] = num_tp
+        metrics['tn'] = num_tn
+        metrics['fp'] = num_fp
+        metrics['fn'] = num_fn
+        metrics['p'] = num_p
+        metrics['r'] = num_r
+        metrics['acc'] = num_acc
+        metrics['IoU(crack)'] = num_tp / (num_tp + num_fp + num_fn)
+        metrics['Iou(background)'] = num_tn / (num_tn + num_fn + num_fp)
+        metrics['MeanIoU'] = num_miou
+        return metrics
 
 def show_metrics(true, pred, train=True):
     """
@@ -87,4 +134,7 @@ def show_metrics(true, pred, train=True):
 # true = tf.random.uniform([10,1],0,maxval=2,dtype=tf.int32)
 # pred = tf.random.uniform([10,1],0,maxval=2,dtype=tf.int32)
 # m.update_state(true,pred)
+# num = m.result().numpy()
+# print(num)
+
 # print('Final result: ', m.result().numpy())  # Final result: 2
