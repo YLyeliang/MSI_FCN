@@ -5,7 +5,7 @@ from model.msi_fcn import MSI_FCN
 from .data import get_dataset
 from core.loss import WSCE
 from .metrics import show_metrics
-
+import datetime
 root = '/home/yel/data/Aerialgoaf/detail/512x512/'
 img_dir = root+'image'
 label_dir = root+'label'
@@ -18,7 +18,10 @@ checkpoint_dir = './training_checkpoints'
 checkpoint = tf.train.Checkpoint(optimizer=optimizer, model=model)
 ckpt_manager = tf.train.CheckpointManager(checkpoint, checkpoint_dir, max_to_keep=5)
 
+log_dir="./logs/"
 
+summary_writer = tf.summary.create_file_writer(
+  log_dir + "fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
 @tf.function
 def train_step(model, input, label, loss_object, optimizer, summary_writer, step):
     with tf.GradientTape() as t:
