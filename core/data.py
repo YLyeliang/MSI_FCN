@@ -18,7 +18,7 @@ def get_dataset(train_path,trainannot_path,batch_size):
     image_ds = tf.data.Dataset.list_files(os.path.join(train_path,"*"), seed=1)
     label_ds = tf.data.Dataset.list_files(os.path.join(trainannot_path,"*"), seed=1)
     dataset = tf.data.Dataset.zip((image_ds, label_ds))
-    dataset = dataset.map(parse_data, num_parallel_calls=AUTOTUNE).shuffle(buffer_size=1000).repeat().batch(batch_size).prefetch(
+    dataset = dataset.map(parse_data, num_parallel_calls=AUTOTUNE).shuffle(buffer_size=1000).batch(batch_size).prefetch(
         buffer_size=AUTOTUNE)
     return dataset
 

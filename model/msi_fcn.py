@@ -39,7 +39,7 @@ class MSI_FCN(tf.keras.Model):
         self.backbone = DenseNet_MSI(input_scales=input_scales,growth_rate=growth_rate,filters=filters,
                                      expansion=expansion,num_layers=num_layers)
         self.msc=[]
-        msc_filters=[filters,filters*2,filters*2,filters*2]
+        msc_filters=[filters//4,filters//4,filters//4,filters//4]
         for i in range(len(k)): # 64 128 256 512
             self.msc.append(MSC(k[i],filters=msc_filters[i]))
 

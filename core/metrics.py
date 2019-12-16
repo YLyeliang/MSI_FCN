@@ -77,9 +77,9 @@ def show_metrics(true, pred, train=True):
     :return:
     """
     metrics = {}
-    y_true = tf.argmax(true, axis=-1)
-    y_true = tf.reshape(y_true, (-1, 1))
-    y_pred = tf.reshape(pred, (-1, 1))
+    y_pred = tf.argmax(pred, axis=-1)
+    y_pred = tf.reshape(y_pred, (-1, 1))
+    y_true = tf.reshape(true, (-1, 1))
 
     tp = tf.metrics.TruePositives()
     tn = tf.metrics.TrueNegatives()
@@ -100,14 +100,14 @@ def show_metrics(true, pred, train=True):
     acc.update_state(y_true, y_pred)
     MeanIou.update_state(y_true, y_pred)
 
-    num_tp = tp.result().numpy()
-    num_tn = tn.result().numpy()
-    num_fp = fp.result().numpy()
-    num_fn = fn.result().numpy()
-    num_p = p.result().numpy()
-    num_r = r.result().numpy()
-    num_acc = acc.result().numpy()
-    num_miou= MeanIou.result().numpy()
+    num_tp = tp.result()
+    num_tn = tn.result()
+    num_fp = fp.result()
+    num_fn = fn.result()
+    num_p = p.result()
+    num_r = r.result()
+    num_acc = acc.result()
+    num_miou= MeanIou.result()
 
     metrics['tp'] = num_tp
     metrics['tn'] = num_tn
@@ -116,9 +116,9 @@ def show_metrics(true, pred, train=True):
     metrics['p'] = num_p
     metrics['r'] = num_r
     metrics['acc'] = num_acc
-    metrics['IoU(crack)'] = num_tp / (num_tp + num_fp + num_fn)
-    metrics['Iou(background)'] = num_tn / (num_tn + num_fn + num_fp)
-    metrics['MeanIoU'] = num_miou
+    metrics['IUcrack'] = num_tp / (num_tp + num_fp + num_fn)
+    metrics['IUbackground'] = num_tn / (num_tn + num_fn + num_fp)
+    metrics['MIU'] = num_miou
     return metrics
     # sens = tf.keras.metrics.SensitivityAtSpecificity()
     # spe = tf.keras.metrics.SpecificityAtSensitivity()
@@ -131,10 +131,13 @@ def show_metrics(true, pred, train=True):
 # print('Final result: ', m.result().numpy())  # Final result: 0.33
 
 # m = tf.keras.metrics.TruePositives()
-# true = tf.random.uniform([10,1],0,maxval=2,dtype=tf.int32)
+# true = tf.random.uniform([10,3,3,2],0,maxval=2,dtype=tf.int32)
+# b = tf.argmax(true,axis=-1)
+# debug=1
 # pred = tf.random.uniform([10,1],0,maxval=2,dtype=tf.int32)
 # m.update_state(true,pred)
-# num = m.result().numpy()
+# num = m.result()
+# b=num.numpy()
 # print(num)
 
 # print('Final result: ', m.result().numpy())  # Final result: 2
