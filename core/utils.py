@@ -1,7 +1,8 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Conv2D
 
-def Conv(filters, size, strides=1, dilation=None, initializer=tf.keras.initializers.he_normal()):
+def Conv(filters, size, strides=1, dilation=None,
+         initializer=tf.keras.initializers.he_normal(),kernel_regularizer=None):
     if strides == 1:
         padding = 'same'
     else:
@@ -9,7 +10,7 @@ def Conv(filters, size, strides=1, dilation=None, initializer=tf.keras.initializ
     if dilation is None:
         dilation = (1, 1)
     conv = Conv2D(filters=filters, kernel_size=size, strides=strides, padding=padding,
-                  dilation_rate=dilation, kernel_initializer=initializer)
+                  dilation_rate=dilation, kernel_initializer=initializer,kernel_regularizer=kernel_regularizer)
     return conv
 
 def SeparableConv(filters,size,strides=1,depth_multiplier=1,initializer=tf.keras.initializers.he_normal()):

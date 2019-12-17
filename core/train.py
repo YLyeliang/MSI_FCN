@@ -42,7 +42,7 @@ def fit(train_ds,
     ckpt_manager = tf.train.CheckpointManager(checkpoint, work_dir, max_to_keep=5)
     summary_writer = tf.summary.create_file_writer(
         work_dir)
-    n = 4120
+    n = 10990
     if fine_tune:
         path =tf.train.latest_checkpoint(work_dir)
         checkpoint.restore(path)
@@ -76,3 +76,4 @@ def fit(train_ds,
         print('Time taken for epoch {} is {} sec\n'.format(epoch + 1,
                                                            time.time() - start))
     ckpt_manager.save()
+

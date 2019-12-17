@@ -50,7 +50,7 @@ class MSI_FCN(tf.keras.Model):
         for i in range(3):  # 64 128 256
             self.upsample.append(Upsample(filters=up_filters[i]))
 
-        self.classifer = Conv(num_classes,size=1)
+        self.classifer = Conv(num_classes,size=1,kernel_regularizer=tf.keras.regularizers.l2(0.001))
     def call(self, x, training=None, mask=None):
         # top-down feature extraction path
         stage_out=self.backbone(x)
