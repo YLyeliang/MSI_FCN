@@ -3,12 +3,12 @@ import os
 import numpy as np
 from PIL import Image
 
-label_dir="/home/yel/yel/data/Aerialgoaf/detail/testannot"
-label_out="/home/yel/yel/data/Aerialgoaf/detail/test_lab"
+label_dir="/home/yel/yel/data/road_crack/trainannot"
+label_out="/home/yel/yel/data/road_crack/train_label"
 
 def deepcrack_to_goaf(src,dst):
     files = os.listdir(src)
-    for file in files:
+    for i,file in enumerate(files):
         img_dir = os.path.join(src,file)
         dst_dir = os.path.join(dst,file)
         img = Image.open(img_dir)
@@ -22,7 +22,8 @@ def deepcrack_to_goaf(src,dst):
 
 def goaf_to_deepcrack(src,dst):
     files = os.listdir(src)
-    for file in files:
+    for i,file in enumerate(files):
+
         img_dir = os.path.join(src,file)
         dst_dir = os.path.join(dst,file)
         img = Image.open(img_dir)

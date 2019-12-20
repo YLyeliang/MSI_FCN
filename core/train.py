@@ -6,6 +6,7 @@ from core.data import get_dataset
 from core.loss import WSCE
 from core.metrics import show_metrics,Metrics
 import datetime
+import logging
 
 @tf.function
 def train_step(input, label, model, loss_func, optimizer):
@@ -43,6 +44,20 @@ def print_summary(metrics,loss,n,epoch,val=False):
                 epoch + 1, n + 1, loss, metrics['acc'], metrics['p'], metrics['r'], metrics['IUcrack'],
                 metrics['MIU']))
 
+# def get_logger(work_dir,filename='training.log'):
+#     logger = logging.getLogger("logger")
+#     handler1 = logging.StreamHandler()
+#     handler2 = logging.FileHandler(filename=os.path.join(work_dir, filename))
+#     logger.setLevel(logging.INFO)
+#     handler1.setLevel(logging.INFO)
+#     handler2.setLevel(logging.INFO)
+#     formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s %(message)s")
+#     handler1.setFormatter(formatter)
+#     handler2.setFormatter(formatter)
+#
+#     logger.addHandler(handler1)
+#     logger.addHandler(handler2)
+
 
 def fit(train_ds,
         val_ds,
@@ -53,6 +68,8 @@ def fit(train_ds,
         work_dir='./work_dir/msi_fcn',
         epochs=100,
         fine_tune=False):
+
+
 
     # checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
     checkpoint = tf.train.Checkpoint(optimizer=optimizer, model=model)

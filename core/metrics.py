@@ -45,8 +45,17 @@ class Metrics():
     def update_state(self,true,pred,is_train=True):
         metrics = {}
         y_pred = tf.argmax(pred, axis=-1)
-        y_pred = tf.reshape(y_pred, (-1, 1))
-        y_true = tf.reshape(true, (-1, 1))
+        y_pred = tf.reshape(y_pred, [-1])
+        y_true = tf.reshape(true, [-1])
+
+        self.tp.reset_states()
+        self.tn.reset_states()
+        self.fp.reset_states()
+        self.fn.reset_states()
+        self.p.reset_states()
+        self.r.reset_states()
+        self.acc.reset_states()
+        self.MeanIou.reset_states()
 
         self.tp.update_state(y_true, y_pred)
         self.tn.update_state(y_true, y_pred)

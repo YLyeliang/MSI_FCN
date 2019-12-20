@@ -13,21 +13,16 @@ import argparse
 def main():
     root = '/home/yel/yel/data/Aerialgoaf/detail/'
     # root = '/home/yel/yel/data/DeepCrack-master/dataset/Deepcrack/'
+    # root = '/home/yel/yel/data/road_crack/'
     img_dir = root + 'test'
     label_dir = root + 'testannot'
     test_ds= get_filename_list(img_dir,label_dir)
-
-    model = MSI_FCN(input_scales=4,
-                    dcu_gr=16,
-                    dense_gr=24,
-                    filters=64,
-                    expansion=2,
-                    msc_filters=[2, 2, 2, 2],
-                    k=(7, 5, 3, 1),
-                    up_filters=2,
-                    num_layers=(4, 4, 4, 4),
-                    num_classes=2)
-    eval(test_ds,model,ckpt_dir='../work_dir/msi_fcn_2')
+    model_config = {"input_scales": 3, "dcu_gr": 16, "dense_gr": 24,
+                    "filters": 64, "expansion": 2, "msc_filters": [2, 2, 2, 2],
+                    "k": (7, 5, 3, 1), "up_filters": 2, "num_layers": (4, 4, 4, 4), "num_classes": 2}
+    ckpt_dir ='../work_dir/msi_fcn_3scales'
+    model = MSI_FCN(**model_config)
+    eval(test_ds,model,ckpt_dir=ckpt_dir)
 
 
 #10990

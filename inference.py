@@ -15,6 +15,9 @@ def main():
     save_dir = './visualization/'
     test_ds= get_filename_list(img_dir,label_dir)
     ckpt_dir = './work_dir/msi_fcn_2'
+    model_config = {"input_scales": 3, "dcu_gr": 16, "dense_gr": 24,
+                    "filters": 64, "expansion": 2, "msc_filters": [2, 2, 2, 2],
+                    "k": (7, 5, 3, 1), "up_filters": 2, "num_layers": (4, 4, 4, 4), "num_classes": 2}
     model = MSI_FCN(input_scales=4,
                     dcu_gr=16,
                     dense_gr=24,

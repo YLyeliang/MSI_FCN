@@ -7,6 +7,29 @@ from tensorflow.keras.layers import (
 from core.utils import Conv, Aspp, SeparableConv, TransposeConv
 from tensorflow.keras.regularizers import l2
 
+class normconnection(tf.keras.Model):
+    def __init__(self,filters=64,out_c=2):
+        super(normconnection, self).__init__()
+        self.conv1 =Conv(filters,3)
+        self.bn1 = BatchNormalization()
+
+        self.conv2 =Conv(filters,3)
+        self.bn2 =BatchNormalization()
+        self.relu= tf.nn.relu
+
+        self.conv3 = Conv(out_c,1,kernel_regularizer=l2())
+
+    def call(self, inputs, training=None, mask=None):
+        x = self.conv1(inputs)
+        x = self.bn1(x)
+        x = self.relu(x)
+
+        x = self.conv2(x)
+        x = self.bn2(x)
+        x =self.relu(x)
+
+        return self.conv3(x)
+
 class MSC(tf.keras.Model):
     """
     The multi-scale connection.

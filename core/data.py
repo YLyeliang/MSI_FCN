@@ -40,8 +40,8 @@ def parse_data(img_file, label_file):
     image = tf.image.resize(image,[HEIGHT,WIDTH])
     label = tf.io.read_file(label_file)
     # goaf data, dtype should be tf.uint16. deepcrack should be tf.uint8
-    label = tf.image.decode_png(label, dtype=tf.uint16)
-    # label = tf.image.decode_png(label,dtype=tf.uint8)
+    # label = tf.image.decode_png(label, dtype=tf.uint16)
+    label = tf.image.decode_png(label,dtype=tf.uint8)
     label = tf.image.resize(label, [HEIGHT, WIDTH])
 
     # data augmentation
@@ -105,7 +105,7 @@ def read_img(img_file,size=(512,512)):
 def get_test_data(img_file,lab_file):
     img = read_img(img_file)
     label = tf.io.read_file(lab_file)
-    label = tf.image.decode_png(label, dtype=tf.uint16)
+    label = tf.image.decode_png(label, dtype=tf.uint8)
     label = tf.image.resize(label, [HEIGHT, WIDTH])
     lab = tf.expand_dims(label,0)
     return img,lab
