@@ -1,12 +1,8 @@
 import tensorflow as tf
 import numpy as np
 from tensorflow.keras.layers import Input
-from core import Conv,TransposeConv
+from core.utils import Conv,TransposeConv
 from tensorflow.keras.regularizers import l2
-from tensorflow.keras.losses import (
-    binary_crossentropy,
-    sparse_categorical_crossentropy
-)
 from backbone import DenseNet_MSI
 from BottomUp import MSC,Upsample
 
@@ -29,28 +25,43 @@ class MSI_FCN(tf.keras.Model):
 
     """
     def __init__(self,input_scales=4,
-                 growth_rate=16,
+                 dcu_gr=16,
+                 dense_gr=24,
                  filters=64,
                  expansion=2,
-                 k=(7,5,3,1),
+                 msc_filters=[2,2,2,2],
+                 k=(5,3,1,1),
+                 aspp_filters=16,
+                 up_filters=64,
+                 dense_block='bottleneck',
                  num_layers=(4,4,4,4),
-                 num_classes=2):
+                 use_aspp=False,
+                 num_classes=2,
+                 display_stages=False):
         super(MSI_FCN, self).__init__()
-        self.backbone = DenseNet_MSI(input_scales=input_scales,growth_rate=growth_rate,filters=filters,
-                                     expansion=expansion,num_layers=num_layers)
+        self.dispaly_stages=display_stages
+        self.backbone = DenseNet_MSI(input_scales=input_scales, dcu_gr=dcu_gr, dense_gr=dense_gr,
+                                     filters=filters, expansion=expansion,aspp_filters=aspp_filters,
+                                     use_aspp=False, dense_block=dense_block, num_layers=num_layers,
+                                     display_stages=display_stages)
         self.msc=[]
-        msc_filters=[filters//4,filters//4,filters//4,filters//4]
         for i in range(len(k)): # 64 128 256 512
             self.msc.append(MSC(k[i],filters=msc_filters[i]))
 
-        self.aspp_deconv = TransposeConv(filters * 4, size=3, strides=2)
+        # deconv of the last layer in top-down.
+        self.last_deconv = TransposeConv(num_classes, size=3, strides=2)
 
         self.upsample=[]
-        up_filters=[filters*2**i for i in range(3)]
+        up_filters=[up_filters for i in range(3)]
         for i in range(3):  # 64 128 256
             self.upsample.append(Upsample(filters=up_filters[i]))
 
-        self.classifer = Conv(num_classes,size=1,kernel_regularizer=tf.keras.regularizers.l2(0.001))
+        self.conv=[]
+        for i in range(3):
+            self.conv.append(Conv(num_classes,1,kernel_regularizer=l2(0.01)))
+
+        self.classifer = Conv(num_classes,size=1,kernel_regularizer=l2(0.01))
+
     def call(self, x, training=None, mask=None):
         # top-down feature extraction path
         stage_out=self.backbone(x)
@@ -60,21 +71,25 @@ class MSI_FCN(tf.keras.Model):
             msc_out.append(self.msc[i](stage_out[i]))
 
         # bottom-up recovery path
-        aspp_upsample=self.aspp_deconv(stage_out[-1])
-        l = tf.concat([aspp_upsample,msc_out[-1]],axis=-1)
+        last_up=self.last_deconv(stage_out[-1])
+        l = tf.concat([last_up,msc_out[-1]],axis=-1)
+        up4=self.conv[2](l)
 
-        l = self.upsample[2](l)
+        l = self.upsample[2](up4)
         l = tf.concat([l,msc_out[2]],axis=-1)
+        up3 = self.conv[1](l)
 
-        l = self.upsample[1](l)
+        l = self.upsample[1](up3)
         l = tf.concat([l,msc_out[1]],axis=-1)
+        up2 = self.conv[0](l)
 
-        l = self.upsample[0](l)
+        l = self.upsample[0](up2)
         l = tf.concat([l,msc_out[0]],axis=-1)
+        out = self.classifer(l)
+        if self.dispaly_stages:
+            return out,up2,up3,up4
 
-        l = self.classifer(l)
-
-        return l
+        return out
 
 # inp = Input(shape=[512,512,3],name='input_image')
 #

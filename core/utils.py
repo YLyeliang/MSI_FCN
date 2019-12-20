@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow.keras.layers import Conv2D
 
 def Conv(filters, size, strides=1, dilation=None,
-         initializer=tf.keras.initializers.he_normal(),kernel_regularizer=None):
+         initializer=tf.initializers.orthogonal(),kernel_regularizer=None):
     if strides == 1:
         padding = 'same'
     else:
@@ -13,7 +13,7 @@ def Conv(filters, size, strides=1, dilation=None,
                   dilation_rate=dilation, kernel_initializer=initializer,kernel_regularizer=kernel_regularizer)
     return conv
 
-def SeparableConv(filters,size,strides=1,depth_multiplier=1,initializer=tf.keras.initializers.he_normal()):
+def SeparableConv(filters,size,strides=1,depth_multiplier=1,initializer=tf.initializers.orthogonal()):
     if strides == 1:
         padding ='same'
     else:
@@ -25,7 +25,7 @@ def SeparableConv(filters,size,strides=1,depth_multiplier=1,initializer=tf.keras
                                                      pointwise_initializer=initializer)
     return separable_conv
 
-def TransposeConv(filters,size,strides=1,initializer = tf.keras.initializers.glorot_uniform()):
+def TransposeConv(filters,size,strides=1,initializer = tf.initializers.glorot_normal()):
     """
     Define a Deconv.
     """
@@ -42,7 +42,7 @@ class Aspp(tf.keras.Model):
     part b): an image-level feature pooling.
     And concat them together, followed by a 1 * 1 convolution.
     """
-    def __init__(self, filters=128):
+    def __init__(self, filters=128,num_classes=2):
         super(Aspp, self).__init__()
         self.atrous_conv1 = Conv(filters, 1)
         self.atrous_conv2 = Conv(filters, 3, dilation=6)
@@ -53,7 +53,7 @@ class Aspp(tf.keras.Model):
         self.conv1 = Conv(filters, 1)
 
         # conv 1*1 after concat
-        self.conv2 = Conv(filters*4, 1)
+        self.conv2 = Conv(num_classes, 1)
 
     def call(self, x):
         input_size = tf.shape(x)[1:3]
