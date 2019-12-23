@@ -6,7 +6,6 @@ from core.data import get_test_data
 from core.metrics import Metrics
 import datetime
 
-
 def eval(test_ds,
          model=MSI_FCN(),
          ckpt_dir='./work_dir/msi_fcn',
