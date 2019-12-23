@@ -18,7 +18,6 @@ from BottomUp import MSC,Upsample
 # _ = model(input)
 # model.summary()
 # tf.keras.utils.plot_model(model)
-
 class MSI_FCN(tf.keras.Model):
     """
     The architecutre of the proposed FCN with multi-scale input,

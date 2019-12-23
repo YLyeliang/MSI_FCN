@@ -9,10 +9,14 @@ import datetime
 
 def eval(test_ds,
          model=MSI_FCN(),
-         ckpt_dir='./work_dir/msi_fcn'):
+         ckpt_dir='./work_dir/msi_fcn',
+         ckpt_name=None):
     # checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
     checkpoint = tf.train.Checkpoint(model=model)
-    path = tf.train.latest_checkpoint(ckpt_dir)
+    if ckpt_name:
+        path = os.path.join(ckpt_dir,ckpt_name)
+    else:
+        path = tf.train.latest_checkpoint(ckpt_dir)
     status=checkpoint.restore(path)
     if path is not None:
         print("resotre model from {}".format(path))
@@ -20,8 +24,8 @@ def eval(test_ds,
     n = 1
     start = time.time()
     for img_file, lab_file in test_ds:
-        print("start inference {}th image".format(n))
         img, lab = get_test_data(img_file, lab_file)
+        print("start inference {}th image".format(n))
         pred = model(img)
         m = Metric.update_state(lab, pred, is_train=False)
         # print("p: {}, r: {}, IUcrack: {}".format( m['tp'], m['fp'], m['fn']))

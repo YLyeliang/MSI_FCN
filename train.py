@@ -92,11 +92,19 @@ import argparse
 #                     "filters": 64, "expansion": 2, "msc_filters": [2, 2, 2, 2],
 #                     "k": (7, 5, 3, 1), "up_filters": 2, "num_layers": (4, 4, 4, 4), "num_classes": 2}
 
+# model msi_fcn_3:     model_config = {"input_scales": 3, "dcu_gr": 16, "dense_gr": 24,
+#                     "filters": 64, "expansion": 2, "msc_filters": [2, 2, 2, 2],
+#                     "k": (7, 5, 3, 1), "up_filters": 2, "num_layers": (4, 4, 4, 4), "num_classes": 2}
+
 # model msi_fcn_2scales:     model_config = {"input_scales": 2, "dcu_gr": 16, "dense_gr": 24,
 #                     "filters": 64, "expansion": 2, "msc_filters": [2, 2, 2, 2],
 #                     "k": (7, 5, 3, 1), "up_filters": 2, "num_layers": (4, 4, 4, 4), "num_classes": 2}
 
-# model msi_fcn_2scales:     model_config = {"input_scales": 1, "dcu_gr": 16, "dense_gr": 24,
+# model msi_fcn_2:     model_config = {"input_scales": 2, "dcu_gr": 16, "dense_gr": 24,
+#                     "filters": 64, "expansion": 2, "msc_filters": [2, 2, 2, 2],
+#                     "k": (7, 5, 3, 1), "up_filters": 2, "num_layers": (4, 4, 4, 4), "num_classes": 2}
+
+# model msi_fcn_1scales:     model_config = {"input_scales": 1, "dcu_gr": 16, "dense_gr": 24,
 #                     "filters": 64, "expansion": 2, "msc_filters": [2, 2, 2, 2],
 #                     "k": (7, 5, 3, 1), "up_filters": 2, "num_layers": (4, 4, 4, 4), "num_classes": 2}
 
@@ -108,22 +116,22 @@ import argparse
 
 def main():
 
-    # root = '/home/yel/yel/data/Aerialgoaf/detail/'
+    root = '/home/yel/yel/data/Aerialgoaf/detail/'
     # root = '/home/yel/yel/data/DeepCrack-master/dataset/DeepCrack/'
-    root = '/home/yel/yel/data/road_crack/'
-    img_dir = root + 'test'
-    label_dir = root + 'testannot'
-    val_dir = root + 'train'
-    vallabel_dir = root + 'trainannot'
+    # root = '/home/yel/yel/data/road_crack/'
+    img_dir = root + 'train'
+    label_dir = root + 'trainannot'
+    val_dir = root + 'val'
+    vallabel_dir = root + 'valannot'
     train_ds = get_dataset(img_dir, label_dir, batch_size=8)
     val_ds = get_dataset(val_dir, vallabel_dir, batch_size=8)
     # val_ds = None
-    fine_tune = True
-    # fine_tune=False
-    model_config = {"input_scales": 4, "dcu_gr": 16, "dense_gr": 24,
+    # fine_tune = True
+    fine_tune=False
+    model_config = {"input_scales": 3, "dcu_gr": 16, "dense_gr": 24,
                     "filters": 64, "expansion": 2, "msc_filters": [2, 2, 2, 2],
                     "k": (7, 5, 3, 1), "up_filters": 2, "num_layers": (4, 4, 4, 4), "num_classes": 2}
-    work_dir='./work_dir/msi_fcn_CFD'
+    work_dir='./work_dir/msi_fcn_3'
 
     model = MSI_FCN(**model_config)
 
@@ -131,7 +139,7 @@ def main():
     optimizer = tf.keras.optimizers.Adam(lr)
 
     fit(train_ds=train_ds, val_ds=val_ds, model=model, optimizer=optimizer,
-        loss_func=WSCE, work_dir=work_dir, epochs=200, fine_tune=fine_tune)
+        loss_func=WSCE, work_dir=work_dir, epochs=300, fine_tune=fine_tune)
 
 
 if __name__ == '__main__':

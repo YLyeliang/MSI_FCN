@@ -98,6 +98,7 @@ class Metrics():
         fn_all = np.sum(self.metrics['fn'])
 
         overall_metrics={}
+        acc = (tp_all+tn_all)/(tp_all+tn_all+fp_all+fn_all)
         specificity = tn_all/(tn_all+fp_all)
         precision = tp_all/(tp_all+fp_all)
         recall = tp_all/(tp_all+fn_all)
@@ -106,7 +107,10 @@ class Metrics():
         IUcrack = tp_all/(tp_all+fp_all+fn_all)
         IUback = tn_all/(tn_all+fn_all+fp_all)
         MIU = (IUcrack+IUback)/2
+        bacc = (recall+specificity)/2
 
+        overall_metrics['accuracy'] = acc
+        overall_metrics['Balanced accuracy']= bacc
         overall_metrics['precision']=precision
         overall_metrics['recall']=recall
         overall_metrics['gmean']=gmean

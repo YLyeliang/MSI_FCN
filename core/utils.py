@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Conv2D
 
+
 def Conv(filters, size, strides=1, dilation=None,
          initializer=tf.initializers.orthogonal(),kernel_regularizer=None):
     if strides == 1:
@@ -33,7 +34,21 @@ def TransposeConv(filters,size,strides=1,initializer = tf.initializers.glorot_no
                                                      padding='same',kernel_initializer=initializer)
     return transpose_conv
 
-
+def conv_block(filters,size,strides=1, num_layers=2,drop_out=False,
+               initializer = tf.initializers.orthogonal(),kernel_regularizer =None):
+    conv =[]
+    if drop_out:
+        for i in range(num_layers):
+            conv += [Conv(filters, size, strides, initializer=initializer, kernel_regularizer=kernel_regularizer),
+                     tf.keras.layers.BatchNormalization(),
+                     tf.keras.layers.ReLU(),
+                     tf.keras.layers.Dropout(0.5)]
+    else:
+        for i in range(num_layers):
+            conv+=[Conv(filters,size,strides,initializer=initializer,kernel_regularizer=kernel_regularizer),
+                   tf.keras.layers.BatchNormalization(),
+                   tf.keras.layers.ReLU()]
+    return conv
 
 class Aspp(tf.keras.Model):
     """

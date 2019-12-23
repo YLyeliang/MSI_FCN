@@ -20,9 +20,9 @@ def main():
     model_config = {"input_scales": 3, "dcu_gr": 16, "dense_gr": 24,
                     "filters": 64, "expansion": 2, "msc_filters": [2, 2, 2, 2],
                     "k": (7, 5, 3, 1), "up_filters": 2, "num_layers": (4, 4, 4, 4), "num_classes": 2}
-    ckpt_dir ='../work_dir/msi_fcn_3scales'
+    ckpt_dir ='../work_dir/msi_fcn_3'
     model = MSI_FCN(**model_config)
-    eval(test_ds,model,ckpt_dir=ckpt_dir)
+    eval(test_ds,model,ckpt_dir=ckpt_dir,ckpt_name='ckpt-27600')
 
 
 #10990
