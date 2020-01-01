@@ -61,6 +61,7 @@ class MSC(tf.keras.Model):
             l = self.bn2[i](l)
             outputs.append(l)
         x = self.relu(tf.maximum(tf.maximum(outputs[0], outputs[1]), outputs[2]))
+        # x = self.relu(tf.add_n([outputs[0],outputs[1],outputs[2]]))
         x = self.conv(x)
         return x
 
@@ -70,9 +71,9 @@ class Upsample(tf.keras.Model):
     The upsample way in bottom-up path,
     which composed of deconv-conv.
     """
-    def __init__(self, filters=64):
+    def __init__(self, filters=64,size=3):
         super(Upsample, self).__init__()
-        self.Tconv = TransposeConv(filters, 3, strides=2)
+        self.Tconv = TransposeConv(filters, size=size, strides=2)
         # self.conv = Conv(filters, 3)
         self.Tbn = BatchNormalization()
         self.bn = BatchNormalization()
@@ -87,3 +88,8 @@ class Upsample(tf.keras.Model):
         x = self.Tconv(x)
         x = self.Tbn(x)
         return self.relu(x)
+
+class DenseUpsample(tf.keras.Model):
+    def __init__(self):
+        super(DenseUpsample, self).__init__()
+        self

@@ -26,7 +26,7 @@ def SeparableConv(filters,size,strides=1,depth_multiplier=1,initializer=tf.initi
                                                      pointwise_initializer=initializer)
     return separable_conv
 
-def TransposeConv(filters,size,strides=1,initializer = tf.initializers.glorot_normal()):
+def TransposeConv(filters,size,strides=2,initializer = tf.initializers.glorot_normal()):
     """
     Define a Deconv.
     """

@@ -40,6 +40,7 @@ class Metrics():
         self.r = tf.keras.metrics.Recall()
         auc = tf.keras.metrics.AUC()
         self.acc = tf.keras.metrics.Accuracy()
+        tf.keras.metrics.SensitivityAtSpecificity
         self.MeanIou = tf.keras.metrics.MeanIoU(num_classes=2)
 
     def update_state(self,true,pred,is_train=True):

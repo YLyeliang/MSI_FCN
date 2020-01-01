@@ -30,13 +30,13 @@ class VGG(tf.keras.Model):
 
         self.conv6 = Sequential(conv_block(self.filters*(expansion**4),3,num_layers=2,drop_out=True))
 
-        self.conv7 = Conv(self.filters*(expansion**4),3)
+        self.conv7 = Conv(num_classes,3)
 
         self.maxpool = MaxPool2D([2, 2], 2)
 
     def call(self, inputs, training=None, mask=None):
         stage_out=[]
-        
+
         x = self.conv1(inputs)
         x = self.maxpool(x)
 

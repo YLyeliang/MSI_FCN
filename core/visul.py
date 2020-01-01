@@ -37,7 +37,7 @@ def writeImage(image,filename,size=(512,512),rgb=True):
             gray[image==l] = label_clors[l]
         im = np.squeeze(gray)
         im = Image.fromarray(np.uint8(im))
-    im =im.resize(size)
+    im =im.resize(size,resample=Image.BILINEAR)
     im.save(filename)
 
 def show_all_branch(pred,save_dir,img_name,rgb=True):
@@ -48,7 +48,7 @@ def show_all_branch(pred,save_dir,img_name,rgb=True):
         if not os.path.exists(branch_dir):
             os.makedirs(branch_dir)
         img_save =os.path.join(branch_dir,img_name)
-        writeImage(pred[i],img_save,rgb=True)
+        writeImage(pred[i],img_save,rgb=rgb)
 
 
 

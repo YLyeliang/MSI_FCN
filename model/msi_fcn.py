@@ -3,8 +3,8 @@ import numpy as np
 from tensorflow.keras.layers import Input
 from core.utils import Conv,TransposeConv
 from tensorflow.keras.regularizers import l2
-from backbone import DenseNet_MSI
-from BottomUp import MSC,Upsample
+from backbone import DenseNet_MSI,bottle_dense
+from BottomUp import MSC,Upsample,normconnection
 
 # def dense_block(x,growth_rate,filters):
 # model = DCU(16, 10)
@@ -29,13 +29,15 @@ class MSI_FCN(tf.keras.Model):
                  filters=64,
                  expansion=2,
                  msc_filters=[2,2,2,2],
-                 k=(5,3,1,1),
+                 k=(7,5,3,1),
                  aspp_filters=16,
                  up_filters=64,
-                 dense_block='bottleneck',
                  num_layers=(4,4,4,4),
-                 use_aspp=False,
                  num_classes=2,
+                 dense_block='bottleneck',
+                 use_msc = True,
+                 use_aspp=False,
+                 use_up_block=False,
                  display_stages=False):
         super(MSI_FCN, self).__init__()
         self.dispaly_stages=display_stages
@@ -44,8 +46,13 @@ class MSI_FCN(tf.keras.Model):
                                      use_aspp=False, dense_block=dense_block, num_layers=num_layers,
                                      display_stages=display_stages)
         self.msc=[]
-        for i in range(len(k)): # 64 128 256 512
-            self.msc.append(MSC(k[i],filters=msc_filters[i]))
+        if use_msc:
+            for i in range(len(k)): # 64 128 256 512
+                self.msc.append(MSC(k[i],filters=msc_filters[i]))
+        else:
+            msc_filters=[filters*(expansion**i) for i in range(4)]
+            for i in range(4):
+                self.msc.append(normconnection(msc_filters[i]))
 
         # deconv of the last layer in top-down.
         self.last_deconv = TransposeConv(num_classes, size=3, strides=2)
@@ -53,11 +60,15 @@ class MSI_FCN(tf.keras.Model):
         self.upsample=[]
         up_filters=[up_filters for i in range(3)]
         for i in range(3):  # 64 128 256
-            self.upsample.append(Upsample(filters=up_filters[i]))
+            self.upsample.append(Upsample(filters=up_filters[i],size=3))
 
         self.conv=[]
-        for i in range(3):
-            self.conv.append(Conv(num_classes,1,kernel_regularizer=l2(0.01)))
+        if use_up_block:
+            for i in range(3):
+                self.conv.append(bottle_dense(growth_rate=dense_gr,filters=filters))
+        else:
+            for i in range(3):
+                self.conv.append(Conv(num_classes,1,kernel_regularizer=l2(0.01)))
 
         self.classifer = Conv(num_classes,size=1,kernel_regularizer=l2(0.01))
 
