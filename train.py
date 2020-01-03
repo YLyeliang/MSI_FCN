@@ -129,9 +129,9 @@ def main():
     fine_tune=False
 
     # MSI_FCN
-    model_config = {"input_scales": 4, "dcu_gr": 16, "dense_gr": 16,"filters": 64,
+    model_config = {"input_scales": 4, "dcu_gr": 16, "dense_gr": 24,"filters": 64,
                          "expansion": 2, "msc_filters": [2, 2, 2, 2],"k": (7, 5, 3, 1),
-                         "up_filters": 2, "num_layers": (4, 4, 4, 4), "num_classes": 2,"use_msc":False,"use_up_block":False}
+                         "up_filters": 2, "num_layers": (4, 4, 4, 4), "num_classes": 2,"use_msc":True,"use_up_block":False}
     # FCN-VGG
     # model_config = {"filters": 64, "expansion": 2, "num_classes": 2}
 
@@ -145,7 +145,9 @@ def main():
     # model = FCD(**model_config)
     # model = FCN_vgg16(**model_config)
     model = MSI_FCN(**model_config)
-
+    # print model params
+    # model.build(input_shape=(None,256,256,3))
+    # print(model.summary())
     lr = tf.keras.optimizers.schedules.ExponentialDecay(2e-4, 5000, 0.95)
     optimizer = tf.keras.optimizers.Adam(lr)
     for k, v in model_config.items():

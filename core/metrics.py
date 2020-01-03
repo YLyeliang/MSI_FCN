@@ -1,5 +1,8 @@
+import os
+
 import tensorflow as tf
 import numpy as np
+from PIL import Image
 
 def fast_hist(a, b, n):
     k = (a >= 0) & (a < n)
@@ -40,14 +43,17 @@ class Metrics():
         self.r = tf.keras.metrics.Recall()
         auc = tf.keras.metrics.AUC()
         self.acc = tf.keras.metrics.Accuracy()
-        tf.keras.metrics.SensitivityAtSpecificity
         self.MeanIou = tf.keras.metrics.MeanIoU(num_classes=2)
 
     def update_state(self,true,pred,is_train=True):
-        metrics = {}
-        y_pred = tf.argmax(pred, axis=-1)
-        y_pred = tf.reshape(y_pred, [-1])
-        y_true = tf.reshape(true, [-1])
+
+        if is_train:
+            y_pred = tf.argmax(pred, axis=-1)
+            y_pred = tf.reshape(y_pred, [-1])
+            y_true = tf.reshape(true, [-1])
+        else:
+            y_pred = tf.reshape(pred,[-1])
+            y_true = tf.reshape(true,[-1])
 
         self.tp.reset_states()
         self.tn.reset_states()
@@ -173,6 +179,42 @@ def show_metrics(true, pred, train=True):
     metrics['IUbackground'] = num_tn / (num_tn + num_fn + num_fp)
     metrics['MIU'] = num_miou
     return metrics
+
+
+def metrics_with_images(pred_dir,lab_dir):
+    files = os.listdir(pred_dir)
+    metrics = Metrics()
+    for file in files:
+        pred_file = os.path.join(pred_dir,file)
+        lab_file = os.path.join(lab_dir,file)
+        pred,true = decode_image_label(pred_file,lab_file)
+        metrics.update_state(true,pred,is_train=False)
+    metric = metrics.overall_metrics()
+    for k,v in metric.items():
+        print("{}: {}".format(k,v))
+
+def decode_image_label(pred_file,lab_file):
+    """ RGB to Gray and calculate the metrics"""
+    image = tf.io.read_file(pred_file)
+    image = tf.image.decode_png(image)
+    image = tf.image.rgb_to_grayscale(image)
+    image = tf.where(image>0,1.,0.)
+    image = tf.image.resize(image,(256,256))
+
+    label = tf.io.read_file(lab_file)
+    label = tf.image.decode_png(label, dtype=tf.uint8)
+    label = tf.image.resize(label,(256,256))
+    return image,label
+
+pred_format = "/home/yel/yel/experiments/fcn_{}"
+true_format = "/home/yel/yel/experiments/condition{}"
+for i in range(1,4):
+    pred_dir = pred_format.format(i)
+    true_dir = true_format.format(i)
+    print("condition: {}".format(i))
+    metrics_with_images(pred_dir,true_dir)
+    print()
+
 
 
 
