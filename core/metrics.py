@@ -186,7 +186,8 @@ def metrics_with_images(pred_dir,lab_dir):
     metrics = Metrics()
     for file in files:
         pred_file = os.path.join(pred_dir,file)
-        lab_file = os.path.join(lab_dir,file)
+
+        lab_file = os.path.join(lab_dir,file[:-7]+".png")
         pred,true = decode_image_label(pred_file,lab_file)
         metrics.update_state(true,pred,is_train=False)
     metric = metrics.overall_metrics()
@@ -206,7 +207,7 @@ def decode_image_label(pred_file,lab_file):
     label = tf.image.resize(label,(256,256))
     return image,label
 
-pred_format = "/home/yel/yel/experiments/fcn_{}"
+pred_format = "/home/yel/yel/experiments/deepcrack_{}"
 true_format = "/home/yel/yel/experiments/condition{}"
 for i in range(1,4):
     pred_dir = pred_format.format(i)

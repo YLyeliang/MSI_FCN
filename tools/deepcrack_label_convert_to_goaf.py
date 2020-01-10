@@ -3,8 +3,8 @@ import os
 import numpy as np
 from PIL import Image
 
-label_dir="/home/yel/yel/data/road_crack/trainannot"
-label_out="/home/yel/yel/data/road_crack/train_label"
+label_dir="/home/yel/yel/data/road_crack/testannot"
+label_out="/home/yel/yel/data/road_crack/deepformat/test_lab"
 
 def deepcrack_to_goaf(src,dst):
     files = os.listdir(src)
