@@ -1,8 +1,8 @@
 # MSI_FCN
-2020/03/19:
+### 2020/03/19:
 To improve the readability of the code, this project is under editing, including introduction and guidelines about the code, and the code optimization, it will be finished in recent days.
 
-2020/1/10:
+### 2020/1/10:
 This is the Fully convolutional network with multi-scale input proposed in paper:{to be continued.}.
 Since the original code in experiments is implemented by tensorflow 1.4. It's a very old tensorflow version, 
 and the original code is hard to read, since all functions are implemented in single python file. All changes to the model
