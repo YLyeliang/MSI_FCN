@@ -49,13 +49,13 @@ python test.py --root the dataset path
  |:----:|:-----|:----:|
  |P|Precision, `TP/(TP+FP)`|segmentation|
  |R|Recall, `TP/(TP+FN)`|segmentation|
+ |TNR|False Positive Rate, `TN/(FP+TN)`|segmentation|
  |F|F-score, `2PR/(P+R)`|segmentation|
- |G|Gmean, `\sqrt(Recall*Specificity)`|segmentation|
- |TPR|True Positive Rate, `TP/(TP+FN)`|segmentation|
- |FPR|False Positive Rate, `FP/(FP+TN)`|segmentation|
+ |G|Gmean, `\sqrt(Recall*TNR)`|segmentation|
  |Balanced acc|Balanced accuracy, measures the percentage of the pixels correctly predicted|segmentation|
- |C|Class average accuracy, means the predictive accuracy over all classes|segmentation|
  |I/U|Mean intersection over union|segmentation|
+ 
+<img src="results_obstacle.png" alt="对比图" width="900" height="620"/>
 
 ### Notes
 When running code in test.py, a lot of warning messages will show on the screen. This is caused by tensorflow 2.0 instead of error.
