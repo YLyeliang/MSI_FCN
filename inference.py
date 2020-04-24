@@ -6,7 +6,7 @@ from core.eval import eval
 from model.msi_fcn import MSI_FCN
 from model.fcn_vgg16 import FCN_vgg16
 from core.data import get_filename_list ,get_test_data
-from core.visul import writeImage,show_all_branch
+from core.visual import writeImage,show_all_branch
 import argparse
 
 def parse_args():

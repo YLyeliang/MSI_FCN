@@ -1,11 +1,76 @@
 # MSI_FCN
-### 2020/03/19:
-To improve the readability of the code, this project is under editing, including introduction and guidelines about the code, and the code optimization, it will be finished in recent days.
+A Tensorflow 2.0 implementation of MSI_FCN.
+### 1. Datasets
+It's waiting for upload.
+### 2. Installation
+Requirement:
 
-### 2020/1/10:
-This is the Fully convolutional network with multi-scale input proposed in paper:{to be continued.}.
-Since the original code in experiments is implemented by tensorflow 1.4. It's a very old tensorflow version, 
-and the original code is hard to read, since all functions are implemented in single python file. All changes to the model
-should manually operated at the source code and makes it less valuable for studying.
-Therefore, we decided to re-implement the code, and migrate the old version to tensorflow 2. All the parts in the experiments 
-and models are implemented in different modules, so as to easily change and explore the functions.
+tensorflow 2.0
+
+numpy 
+
+pillow 
+
+matplotlib
+
+### 3.Training
+Before the training, please download the dataset. the name rule of dataset should as follow:
+
+-- dataset
+
+---- train
+
+---- trainannot
+
+---- val
+
+---- valannot
+
+---- test
+
+---- testannot
+
+All you need is type following command in the directory of project.
+```
+python train.py --root the dataset path
+```
+
+### 4. Test
+All you need is type following command in the directory of project.
+```
+python test.py --root the dataset path
+```
+
+### 5. Evaluation
+
+ Metrics (appeared in our papers):
+
+ |Metric|Description|Usage|
+ |:----:|:-----|:----:|
+ |P|Precision, `TP/(TP+FP)`|segmentation|
+ |R|Recall, `TP/(TP+FN)`|segmentation|
+ |F|F-score, `2PR/(P+R)`|segmentation|
+ |G|Gmean, `\sqrt(Recall*Specificity)`|segmentation|
+ |TPR|True Positive Rate, `TP/(TP+FN)`|segmentation|
+ |FPR|False Positive Rate, `FP/(FP+TN)`|segmentation|
+ |Balanced acc|Balanced accuracy, measures the percentage of the pixels correctly predicted|segmentation|
+ |C|Class average accuracy, means the predictive accuracy over all classes|segmentation|
+ |I/U|Mean intersection over union|segmentation|
+
+### Notes
+When running code in test.py, a lot of warning messages will show on the screen. This is caused by tensorflow 2.0 instead of error.
+
+### References
+If you take use of our datasets or code, please cite our papers:
+```
+@ARTICLE{9039630,  
+author={J. {Cheng} and L. {Ye} and Y. {Guo} and J. {Zhang} and H. {An}},  
+journal={IEEE Access},  
+title={Ground Crack Recognition Based on Fully Convolutional Network With Multi-Scale Input},   
+year={2020},  
+volume={8},  
+number={},  
+pages={53034-53048}
+}
+```
+If you have questions, please leave a message in issue block.

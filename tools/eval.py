@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 from core.eval import eval
 from core.data import get_filename_list
 from model.msi_fcn import MSI_FCN
@@ -16,7 +16,8 @@ import argparse
 #     parser.add_argument("--img_dir",default=)
 
 def main():
-    root = '/home/yel/yel/data/Aerialgoaf/detail/'
+    # root = 'D:\AerialGoaf\detail\\512x512\\'
+    root = "D:/data/detail/"
     # root = '/home/yel/yel/data/DeepCrack-master/dataset/DeepCrack/'
     # root = '/home/yel/yel/data/road_crack/'
     img_dir = root + 'test'
@@ -43,7 +44,7 @@ def main():
     # model = FCN_vgg16(**model_config)
     for k, v in model_config.items():
         print("{}: {}".format(k, v))
-    eval(test_ds, model, ckpt_dir=ckpt_dir, ckpt_name='ckpt-17')
+    eval(test_ds, model, ckpt_dir=ckpt_dir, ckpt_name='ckpt-11017')
 
 
 if __name__ == '__main__':

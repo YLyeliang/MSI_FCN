@@ -23,8 +23,6 @@ def get_hist(predictions, labels):
         hist += fast_hist(labels[i].flatten(), predictions[i].argmax(2).flatten(), num_class)
     return hist
 
-
-
 class Metrics():
     def __init__(self):
         self.metrics = {}
@@ -52,7 +50,8 @@ class Metrics():
             y_pred = tf.reshape(y_pred, [-1])
             y_true = tf.reshape(true, [-1])
         else:
-            y_pred = tf.reshape(pred,[-1])
+            y_pred = tf.argmax(pred, axis=-1)
+            y_pred = tf.reshape(y_pred,[-1])
             y_true = tf.reshape(true,[-1])
 
         self.tp.reset_states()
@@ -128,59 +127,6 @@ class Metrics():
 
         return overall_metrics
 
-def show_metrics(true, pred, train=True):
-    """
-    Show metrics. This is a binary-classes metric calculation.
-    :param true:
-    :param pred:
-    :return:
-    """
-    metrics = {}
-    y_pred = tf.argmax(pred, axis=-1)
-    y_pred = tf.reshape(y_pred, (-1, 1))
-    y_true = tf.reshape(true, (-1, 1))
-
-    tp = tf.metrics.TruePositives()
-    tn = tf.metrics.TrueNegatives()
-    fp = tf.metrics.FalsePositives()
-    fn = tf.metrics.FalseNegatives()
-    p = tf.keras.metrics.Precision()
-    r = tf.keras.metrics.Recall()
-    auc = tf.keras.metrics.AUC()
-    acc = tf.keras.metrics.Accuracy()
-    MeanIou = tf.keras.metrics.MeanIoU(num_classes=2)
-
-    tp.update_state(y_true, y_pred)
-    tn.update_state(y_true, y_pred)
-    fp.update_state(y_true, y_pred)
-    fn.update_state(y_true, y_pred)
-    p.update_state(y_true, y_pred)
-    r.update_state(y_true, y_pred)
-    acc.update_state(y_true, y_pred)
-    MeanIou.update_state(y_true, y_pred)
-
-    num_tp = tp.result()
-    num_tn = tn.result()
-    num_fp = fp.result()
-    num_fn = fn.result()
-    num_p = p.result()
-    num_r = r.result()
-    num_acc = acc.result()
-    num_miou= MeanIou.result()
-
-    metrics['tp'] = num_tp
-    metrics['tn'] = num_tn
-    metrics['fp'] = num_fp
-    metrics['fn'] = num_fn
-    metrics['p'] = num_p
-    metrics['r'] = num_r
-    metrics['acc'] = num_acc
-    metrics['IUcrack'] = num_tp / (num_tp + num_fp + num_fn)
-    metrics['IUbackground'] = num_tn / (num_tn + num_fn + num_fp)
-    metrics['MIU'] = num_miou
-    return metrics
-
-
 def metrics_with_images(pred_dir,lab_dir):
     files = os.listdir(pred_dir)
     metrics = Metrics()
@@ -207,14 +153,14 @@ def decode_image_label(pred_file,lab_file):
     label = tf.image.resize(label,(256,256))
     return image,label
 
-pred_format = "/home/yel/yel/experiments/deepcrack_{}"
-true_format = "/home/yel/yel/experiments/condition{}"
-for i in range(1,4):
-    pred_dir = pred_format.format(i)
-    true_dir = true_format.format(i)
-    print("condition: {}".format(i))
-    metrics_with_images(pred_dir,true_dir)
-    print()
+# pred_format = "/home/yel/yel/experiments/deepcrack_{}"
+# true_format = "/home/yel/yel/experiments/condition{}"
+# for i in range(1,4):
+#     pred_dir = pred_format.format(i)
+#     true_dir = true_format.format(i)
+#     print("condition: {}".format(i))
+#     metrics_with_images(pred_dir,true_dir)
+#     print()
 
 
 

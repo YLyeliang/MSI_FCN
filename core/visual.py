@@ -50,7 +50,51 @@ def show_all_branch(pred,save_dir,img_name,rgb=True):
         img_save =os.path.join(branch_dir,img_name)
         writeImage(pred[i],img_save,rgb=rgb)
 
+def gray_to_rgb(image,size=(512,512)):
+    """
+    The output of deepcrack is a binary mask that black means crack, and white means background.
+    To fit our experiments, the color space need to change.
+    :param img:
+    :return:
+    """
+    back = [0, 0, 0]
+    crack = [128, 0, 0]
+    image = image.convert("L")
+    image = np.array(image)
+    r = np.ones_like(image)
+    g = np.ones_like(image)
+    b = np.ones_like(image)
+    label_colors = np.array([back, crack])
+    t= 80
 
+    r[image > t] = label_colors[1, 0]
+    g[image > t] = label_colors[1, 1]
+    b[image > t] = label_colors[1, 2]
 
+    r[image <= t] = label_colors[0, 0]
+    g[image <= t] = label_colors[0, 1]
+    b[image <= t] = label_colors[0, 2]
 
+    rgb = np.zeros((image.shape[0], image.shape[1], 3))
+    rgb[:, :, 0] = r / 1.0
+    rgb[:, :, 1] = g / 1.0
+    rgb[:, :, 2] = b / 1.0
+    im = Image.fromarray(np.uint8(rgb))
+    im = im.resize(size,resample=Image.BILINEAR)
+    return im
 
+def demo_gray_to_rgb():
+    path = "D:/tmp/crack/comparision/512/obstacles/deepcrack"
+    out_dir = "D:/tmp/crack/comparision/512/obstacles/deepcrack/rgb"
+    file =os.listdir(path)
+    files=[]
+    suffix = "gf"
+    for i in file:
+        if suffix in i:
+            files.append(i)
+    for img in files:
+        image =Image.open(os.path.join(path,img))
+        image = gray_to_rgb(image)
+        image.save(os.path.join(out_dir,img))
+
+# demo_gray_to_rgb()

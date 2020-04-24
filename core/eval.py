@@ -6,21 +6,19 @@ from core.data import get_test_data
 from core.metrics import Metrics
 import datetime
 
-
-
 def eval(test_ds,
          model=MSI_FCN(),
-         ckpt_dir='./work_dir/msi_fcn',
-         ckpt_name=None):
+         ckpt_dir='./work_dir/msi_fcn/ckpt-*'
+         ):
     # checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
     checkpoint = tf.train.Checkpoint(model=model)
-    if ckpt_name:
-        path = os.path.join(ckpt_dir,ckpt_name)
+
+    if 'ckpt' not in ckpt_dir:
+        path=tf.train.latest_checkpoint(ckpt_dir)
     else:
-        path = tf.train.latest_checkpoint(ckpt_dir)
+        path=ckpt_dir
     status=checkpoint.restore(path)
-    if path is not None:
-        print("resotre model from {}".format(path))
+    print("resotre model from {}".format(path))
     Metric = Metrics()
     n = 1
     start = time.time()

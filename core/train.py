@@ -4,7 +4,7 @@ import os
 from model.msi_fcn import MSI_FCN
 from core.data import get_dataset
 from core.loss import WSCE
-from core.metrics import show_metrics,Metrics
+from core.metrics import Metrics
 import datetime
 import logging
 
@@ -106,10 +106,11 @@ def fit(train_ds,
             n+=1
 
         # saving (checkpoint) the model every 20 epochs
-        if (epoch + 1) % 20 == 0:
+        if (epoch + 1) % 10 == 0:
             ckpt_manager.save(checkpoint_number=n)
 
-        print('Time taken for epoch {} is {} sec\n'.format(epoch + 1,
-                                                           time.time() - start))
-    ckpt_manager.save()
+        consume_time=time.time() - start
+        print('Time taken for epoch {} is {:2f} sec, eta:{} \n'.format(epoch + 1,
+                                                           consume_time,datetime.timedelta(seconds=(epochs-epoch-1)*consume_time)))
+    ckpt_manager.save(checkpoint_number=n)
 
